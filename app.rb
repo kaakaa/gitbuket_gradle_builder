@@ -27,10 +27,10 @@ post '/hook' do
 
 	project_root = "./build/#{name}"
 	if Dir.exists?(project_root) then
-    p `git -C #{project_root} pull`
+		p `git -C #{project_root} pull`
 	else
-    p `git clone #{url} #{project_root}`
-	  `chmod +x #{project_root}/gradlew`
+		p `git clone #{url} #{project_root}`
+		`chmod +x #{project_root}/gradlew`
 	end
 	`#{project_root}/gradlew build -p #{project_root} > #{project_root}/build.log`
 
