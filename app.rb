@@ -18,6 +18,10 @@ get '/:project' do
 	haml :log
 end
 
+post '/build-hook' do
+	p @params
+end
+
 post '/hook' do
 	p @params['payload']
 	params = JSON.parse @params['payload']
@@ -30,7 +34,7 @@ post '/hook' do
 		p `git -C #{project_root} pull`
 	else
 		p `git clone #{url} #{project_root}`
-		`chmod +x #{project_root}/gradlew`
+		`chmod -R +x #{project_root}`
 	end
 	`#{project_root}/gradlew build -p #{project_root} > #{project_root}/build.log`
 
