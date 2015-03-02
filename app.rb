@@ -30,13 +30,19 @@ post '/hook' do
 	name = params['repository']['name']
 
 	project_root = "./build/#{name}"
+	
 	if Dir.exists?(project_root) then
-		p `git -C #{project_root} pull`
+	  git_version = `git --version`.split[2]
+	  work_dir = "-C #{project_root}"
+		if git_version < 1.8.5 then
+			work_dir = "--work-tree #{project_root} --git-dir #{project_root}"
+		end
+		p `git -C #{work_dir} pull`
 	else
 		p `git clone #{url} #{project_root}`
 		`chmod -R +x #{project_root}`
 	end
-	`#{project_root}/gradlew build -p #{project_root} > #{project_root}/build.log`
+	`#{project_root}/gradlew#{'.bat' if RUBY_PLATFORM.include('mswin')} clean build -p #{project_root} > #{project_root}/build.log`
 
 	if $? then
 		p 'BUILD SUCCECC'
